@@ -6,11 +6,7 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
-var downstreamApi = builder.Configuration.GetSection("DownstreamApi").Get<DownstreamApiConfiguration>();
-if (downstreamApi is null)
-{
-    throw new InvalidOperationException("DownstreamApi configuration is missing");
-}
+var downstreamApi = builder.Configuration.GetSection("DownstreamApi").Get<DownstreamApiConfiguration>() ?? throw new InvalidOperationException("DownstreamApi configuration is missing");
 
 builder.Services.AddScoped<DownstreamApiAuthorizationMessageHandler>();
 builder.Services.AddHttpClient("ComposableUI.DownstreamApi", client => client.BaseAddress = downstreamApi.BaseUrl)
