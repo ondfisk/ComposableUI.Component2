@@ -1,4 +1,4 @@
-namespace ComposableUI.Team1.Lib;
+namespace ComposableUI.Component2;
 
 public record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
 {

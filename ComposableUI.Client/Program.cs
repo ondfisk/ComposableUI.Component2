@@ -6,8 +6,14 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
+var downstreamApi = builder.Configuration.GetSection("DownstreamApi").Get<DownstreamApiConfiguration>();
+if (downstreamApi is null)
+{
+    throw new InvalidOperationException("DownstreamApi configuration is missing");
+}
+
 builder.Services.AddScoped<DownstreamApiAuthorizationMessageHandler>();
-builder.Services.AddHttpClient("ComposableUI.DownstreamApi", client => client.BaseAddress = new Uri(builder.Configuration.GetSection("DownstreamApi")["BaseUrl"]))
+builder.Services.AddHttpClient("ComposableUI.DownstreamApi", client => client.BaseAddress = downstreamApi.BaseUrl)
     .AddHttpMessageHandler<DownstreamApiAuthorizationMessageHandler>();
 
 // Supply HttpClient instances that include access tokens when making requests to the server project
@@ -16,10 +22,10 @@ builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().Cre
 builder.Services.AddMsalAuthentication(options =>
 {
     builder.Configuration.Bind("AzureAd", options.ProviderOptions.Authentication);
-    foreach (var scope in builder.Configuration.GetSection("DownstreamApi:Scopes").Get<List<string>>())
+    foreach (var scope in downstreamApi.Scopes)
     {
         options.ProviderOptions.DefaultAccessTokenScopes.Add(scope);
-    }   
+    }
 });
 
 await builder.Build().RunAsync();
