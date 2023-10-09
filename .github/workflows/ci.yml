@@ -9,27 +9,38 @@
       branches:
         - main
 
+  env:
+    CONFIGURATION: Release
+    DOTNET_VERSION: 7.0.x
+
   jobs:
     build:
       runs-on: ubuntu-latest
-      env:
-        CONFIGURATION: Release
       permissions:
         packages: write
         contents: read
+        issues: read
+        checks: write
+        pull-requests: write
 
       steps:
         - uses: actions/checkout@v4
         - name: Setup .NET
           uses: actions/setup-dotnet@v3
           with:
-            dotnet-version: 7.0.x
+            dotnet-version: ${{ env.DOTNET_VERSION }}
         - name: Restore dependencies
           run: dotnet restore
         - name: Build
           run: dotnet build --no-restore --configuration ${{ env.CONFIGURATION }}
         - name: Test
-          run: dotnet test --no-build --configuration ${{ env.CONFIGURATION }} --verbosity normal
+          run: dotnet test --no-build --configuration ${{ env.CONFIGURATION }} --logger trx --verbosity normal
+        - name: Publish Test Results
+          uses: EnricoMi/publish-unit-test-result-action@v2
+          if: always()
+          with:
+            files: |
+              **/*.trx
         - name: Push package to GitHub packages
           if: github.ref == 'refs/heads/main'
           run: dotnet nuget push ./**/*.nupkg --source "https://nuget.pkg.github.com/$GITHUB_REPOSITORY_OWNER/index.json" --api-key ${{ secrets.GITHUB_TOKEN }} --skip-duplicate
