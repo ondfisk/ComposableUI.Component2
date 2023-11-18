@@ -10,7 +10,7 @@ public class DownstreamApiAuthorizationMessageHandler : AuthorizationMessageHand
         : base(provider, navigation)
     {
         ConfigureHandler(
-            authorizedUrls: new[] { config.GetSection("DownstreamApi")["BaseUrl"] },
+            authorizedUrls: [ config.GetSection("DownstreamApi")["BaseUrl"]! ],
             scopes: config.GetSection("DownstreamApi:Scopes").Get<List<string>>());
     }
 }

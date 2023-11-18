@@ -1,13 +1,13 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.34031.279
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ComposableUI.Component2", "ComposableUI.Component2\ComposableUI.Component2.csproj", "{FA66169D-D831-42EF-819D-0893491C2EAA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ComposableUI.Client", "ComposableUI.Client\ComposableUI.Client.csproj", "{B3592B54-E2A7-4D49-A795-AC4E9763C568}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ComposableUI.Client", "ComposableUI.Client\ComposableUI.Client.csproj", "{B3592B54-E2A7-4D49-A795-AC4E9763C568}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ComposableUI.Component2.Tests", "ComposableUI.Component2.Tests\ComposableUI.Component2.Tests.csproj", "{6910D3F0-2DA5-46E5-B03D-98B97D622057}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ComposableUI.Component2.Tests", "ComposableUI.Component2.Tests\ComposableUI.Component2.Tests.csproj", "{6910D3F0-2DA5-46E5-B03D-98B97D622057}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

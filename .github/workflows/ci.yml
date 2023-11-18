@@ -10,8 +10,8 @@
         - main
 
   env:
-    CONFIGURATION: Release
-    DOTNET_VERSION: 7.0.x
+    DOTNET_VERSION: 8.0.x
+    DOTNET_CONFIGURATION: Release
 
   jobs:
     build:
@@ -32,9 +32,9 @@
         - name: Restore dependencies
           run: dotnet restore
         - name: Build
-          run: dotnet build --no-restore --configuration ${{ env.CONFIGURATION }}
+          run: dotnet build --no-restore --configuration $DOTNET_CONFIGURATION
         - name: Test
-          run: dotnet test --no-build --configuration ${{ env.CONFIGURATION }} --logger trx --verbosity normal
+          run: dotnet test --no-build --configuration $DOTNET_CONFIGURATION --logger trx --verbosity normal
         - name: Publish Test Results
           uses: EnricoMi/publish-unit-test-result-action@v2
           if: always()
