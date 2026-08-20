@@ -1,46 +1,52 @@
 ---
-  name: Continuous Integration
+name: Continuous Integration
 
-  on:
-    push:
-      branches:
-        - main
-    pull_request:
-      branches:
-        - main
+"on":
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
-  env:
-    DOTNET_VERSION: 8.0.x
-    DOTNET_CONFIGURATION: Release
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
-  jobs:
-    build:
-      runs-on: ubuntu-latest
-      permissions:
-        packages: write
-        contents: read
-        issues: read
-        checks: write
-        pull-requests: write
+permissions: {}
 
-      steps:
-        - uses: actions/checkout@v4
-        - name: Setup .NET
-          uses: actions/setup-dotnet@v3
-          with:
-            dotnet-version: ${{ env.DOTNET_VERSION }}
-        - name: Restore dependencies
-          run: dotnet restore
-        - name: Build
-          run: dotnet build --no-restore --configuration $DOTNET_CONFIGURATION
-        - name: Test
-          run: dotnet test --no-build --configuration $DOTNET_CONFIGURATION --logger trx --verbosity normal
-        - name: Publish Test Results
-          uses: EnricoMi/publish-unit-test-result-action@v2
-          if: always()
-          with:
-            files: |
-              **/*.trx
-        - name: Push package to GitHub packages
-          if: github.ref == 'refs/heads/main'
-          run: dotnet nuget push ./**/*.nupkg --source "https://nuget.pkg.github.com/$GITHUB_REPOSITORY_OWNER/index.json" --api-key ${{ secrets.GITHUB_TOKEN }} --skip-duplicate
+jobs:
+  build:
+    name: Build and Test
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write # Required to push packages to GitHub Packages
+
+    env:
+      DOTNET_VERSION: 10.0.x
+      DOTNET_CONFIGURATION: Release
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+      - name: Restore
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --no-restore --configuration $DOTNET_CONFIGURATION
+      - name: Test
+
+        run: dotnet test --no-build --configuration $DOTNET_CONFIGURATION
+
+      - name: Push package to GitHub packages
+        if: github.ref == 'refs/heads/main'
+        run: dotnet nuget push ./**/*.nupkg --source "https://nuget.pkg.github.com/$GITHUB_REPOSITORY_OWNER/index.json" --api-key ${{ secrets.GITHUB_TOKEN }} --skip-duplicate

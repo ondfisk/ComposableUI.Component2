@@ -2,7 +2,7 @@ namespace ComposableUI.Component2.Tests;
 
 public static class TestExtensions
 {
-    public static MockHttpMessageHandler AddTestHttpClient(this TestServiceProvider services)
+    public static MockHttpMessageHandler AddTestHttpClient(this BunitServiceProvider services)
     {
         var handler = new MockHttpMessageHandler();
         var client = handler.ToHttpClient();

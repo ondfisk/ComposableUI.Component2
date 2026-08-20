@@ -6,7 +6,7 @@ public class FetchDataTests
     public void PageShouldLoadWeatherForecast()
     {
         // Arrange
-        using var ctx = new TestContext();
+        using var ctx = new BunitContext();
         var fakeHttp = ctx.Services.AddTestHttpClient();
         var forecasts = new List<WeatherForecast>
         {
@@ -17,10 +17,10 @@ public class FetchDataTests
         fakeHttp.When("https://localhost/WeatherForecast").RespondJson(forecasts);
 
         // Act
-        var cut = ctx.RenderComponent<FetchData>();
+        var cut = ctx.Render<FetchData>();
 
         // Assert
         var tbodyElm = cut.WaitForElement("table > tbody");
-        tbodyElm.ChildElementCount.Should().Be(forecasts.Count);
+        Assert.Equal(forecasts.Count, tbodyElm.ChildElementCount);
     }
 }
